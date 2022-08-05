@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package mc_go_fns_proto;
+
+import "validate/validate.proto";
+import "api/annotations.proto";
+import "tag/tag.proto";
+import "openapiv3/annotations.proto";
+
+option go_package = "./mc_go_fns_proto;mc_go_fns_proto";
+
+option (micro.openapiv3.openapiv3_swagger) = {
+  info: {
+    title: "fns service";
+    version: "0.0.1";
+    description: "fns service for inn";
+  };
+	servers: {
+    url: "{proto}://{sub}.fns.gov.ru/v1";
+    description: "server";
+		variables: {
+			additional_properties: {
+				name: "proto";
+				value: {
+				  enum: ["http", "https"];
+				  default: "https";
+				  description: "protocols"
+				};
+			};
+			additional_properties: {
+			  name: "sub";
+				value: {
+					enum: ["test", "prod"];
+          default: "test";
+          description: "subdomain";
+				};
+			};
+		};
+	};
+};
+
+
+service InnService {
+  rpc GetInn(GetInnReq) returns (GetInnRsp) {
+    option (micro.api.http) = { post: "/getinn", body: "*"; };
+    option (micro.openapiv3.openapiv3_operation) = {
+			operation_id: "GetInn";
+			responses: {
+        default: {
+          reference: {
+            _ref: ".mc_go_fns_proto.ErrorRsp";
+          };
+        };
+      };
+			parameters: {
+				parameter: {
+				  name: "Authorization";
+				  in: "header";
+				  schema: {
+						schema: {
+					  	type: "string";
+						};
+					};
+				  required: true;
+			  };
+		  };
+    };
+  };
+};
+
+
+message GetInnReq {
+  string FirstName = 1 [json_name = "firstName", (validate.rules).string.min_len = 1];
+  string MiddleName = 2 [json_name = "middleName", (validate.rules).string.min_len = 1];
+  string LastName = 3 [json_name = "lastName", (validate.rules).string.min_len = 1];
+  string DocCode = 4 [json_name = "docCode", (validate.rules).string.min_len = 1, (micro.tag.tags) = "xml:\"DocCode,omitempty\""];
+  string DocNumber = 5 [json_name = "docNumber", (validate.rules).string.min_len = 2];
+};
+
+message GetInnRsp {
+  string Inn = 1 [json_name = "inn"];
+};
+
+message ErrorRsp {
+  string code = 1 [json_name = "code"];
+  string text = 2 [json_name = "text"];
+};

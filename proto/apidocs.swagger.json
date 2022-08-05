@@ -1,0 +1,83 @@
+# Generated with protoc-gen-go-micro
+
+openapi: 3.0.3
+info:
+    title: fns service
+    description: fns service for inn
+    version: 0.0.1
+servers:
+    - url: '{proto}://{sub}.fns.gov.ru/v1'
+      description: server
+      variables:
+        proto:
+            enum:
+                - http
+                - https
+            default: https
+            description: protocols
+        sub:
+            enum:
+                - test
+                - prod
+            default: test
+            description: subdomain
+paths:
+    /getinn:
+        post:
+            tags:
+                - InnService
+            operationId: GetInn
+            parameters:
+                - name: Authorization
+                  in: header
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/GetInnReq'
+                required: true
+            responses:
+                default:
+                    description: Default
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorRsp'
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetInnRsp'
+components:
+    schemas:
+        ErrorRsp:
+            type: object
+            properties:
+                code:
+                    type: string
+                text:
+                    type: string
+        GetInnReq:
+            type: object
+            properties:
+                FirstName:
+                    type: string
+                MiddleName:
+                    type: string
+                LastName:
+                    type: string
+                DocCode:
+                    type: string
+                DocNumber:
+                    type: string
+        GetInnRsp:
+            type: object
+            properties:
+                Inn:
+                    type: string
+tags:
+    - name: InnService
