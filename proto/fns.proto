@@ -68,6 +68,14 @@ service InnService {
   };
 };
 
+message InnMsg {
+	string FirstName = 1 [json_name = "firstName", (validate.rules).string.min_len = 1];
+  string MiddleName = 2 [json_name = "middleName", (validate.rules).string.min_len = 1];
+  string LastName = 3 [json_name = "lastName", (validate.rules).string.min_len = 1];
+  string DocCode = 4 [json_name = "docCode", (validate.rules).string.min_len = 1, (micro.tag.tags) = "xml:\"DocCode,omitempty\""];
+  string DocNumber = 5 [json_name = "docNumber", (validate.rules).string.min_len = 1];
+	string Id = 6 [json_name = "id", (validate.rules).string.min_len = 1];
+};
 
 message GetInnReq {
   string FirstName = 1 [json_name = "firstName", (validate.rules).string.min_len = 1];

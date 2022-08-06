@@ -35,6 +35,169 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on InnMsg with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *InnMsg) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on InnMsg with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in InnMsgMultiError, or nil if none found.
+func (m *InnMsg) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *InnMsg) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetFirstName()) < 1 {
+		err := InnMsgValidationError{
+			field:  "FirstName",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetMiddleName()) < 1 {
+		err := InnMsgValidationError{
+			field:  "MiddleName",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetLastName()) < 1 {
+		err := InnMsgValidationError{
+			field:  "LastName",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetDocCode()) < 1 {
+		err := InnMsgValidationError{
+			field:  "DocCode",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetDocNumber()) < 1 {
+		err := InnMsgValidationError{
+			field:  "DocNumber",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetId()) < 1 {
+		err := InnMsgValidationError{
+			field:  "Id",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return InnMsgMultiError(errors)
+	}
+	return nil
+}
+
+// InnMsgMultiError is an error wrapping multiple validation errors returned by
+// InnMsg.ValidateAll() if the designated constraints aren't met.
+type InnMsgMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m InnMsgMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m InnMsgMultiError) AllErrors() []error { return m }
+
+// InnMsgValidationError is the validation error returned by InnMsg.Validate if
+// the designated constraints aren't met.
+type InnMsgValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e InnMsgValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e InnMsgValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e InnMsgValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e InnMsgValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e InnMsgValidationError) ErrorName() string { return "InnMsgValidationError" }
+
+// Error satisfies the builtin error interface
+func (e InnMsgValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sInnMsg.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = InnMsgValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = InnMsgValidationError{}
+
 // Validate checks the field values on GetInnReq with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
