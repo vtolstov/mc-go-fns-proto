@@ -10,12 +10,12 @@ import "openapiv3/annotations.proto";
 option go_package = "./mc_go_fns_proto;mc_go_fns_proto";
 
 option (micro.openapiv3.openapiv3_swagger) = {
-  info: {
+    info: {
     title: "fns service";
     version: "0.0.1";
     description: "fns service for inn";
-  };
-	servers: {
+    };
+    servers: {
     url: "{proto}://{sub}.fns.gov.ru/v1";
     description: "server";
 		variables: {
@@ -42,10 +42,11 @@ option (micro.openapiv3.openapiv3_swagger) = {
 
 service InnService {
   rpc GetInn(GetInnReq) returns (GetInnRsp) {
+    option (micro.api.micro_method) = { timeout: 5; };
     option (micro.api.http) = { post: "/getinn", body: "*"; };
     option (micro.openapiv3.openapiv3_operation) = {
-			operation_id: "GetInn";
-			responses: {
+	operation_id: "GetInn";
+	responses: {
         default: {
           reference: {
             _ref: ".mc_go_fns_proto.ErrorRsp";
@@ -69,12 +70,12 @@ service InnService {
 };
 
 message InnMsg {
-	string FirstName = 1 [json_name = "firstName", (validate.rules).string.min_len = 1];
+  string FirstName = 1 [json_name = "firstName", (validate.rules).string.min_len = 1];
   string MiddleName = 2 [json_name = "middleName", (validate.rules).string.min_len = 1];
   string LastName = 3 [json_name = "lastName", (validate.rules).string.min_len = 1];
   string DocCode = 4 [json_name = "docCode", (validate.rules).string.min_len = 1, (micro.tag.tags) = "xml:\"DocCode,omitempty\""];
   string DocNumber = 5 [json_name = "docNumber", (validate.rules).string.min_len = 1];
-	string Id = 6 [json_name = "id", (validate.rules).string.min_len = 1];
+  string Id = 6 [json_name = "id", (validate.rules).string.min_len = 1];
 };
 
 message GetInnReq {
