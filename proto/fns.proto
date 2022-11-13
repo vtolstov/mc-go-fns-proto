@@ -42,7 +42,7 @@ option (micro.openapiv3.openapiv3_swagger) = {
 
 service InnService {
   rpc GetInn(GetInnReq) returns (GetInnRsp) {
-    option (micro.api.micro_method) = { timeout: 5; };
+    option (micro.api.micro_method) = { timeout: "5s"; };
     option (micro.api.http) = { post: "/getinn", body: "*"; };
     option (micro.openapiv3.openapiv3_operation) = {
 	operation_id: "GetInn";
